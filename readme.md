@@ -247,3 +247,99 @@ Windows/LinuxではCtrl+B、macOSではCmd+Bを入力し、ゲーム全体を実
 
 > info
 > 「プロジェクト」 -> 「プロジェクト設定」 -> 「アプリケーション」リスト内の「実行」の中でメインシーンは定義されています。
+
+## セルを更新する
+
+いよいよメインとなるセルの更新処理を記述していきます。
+
+`cell_tile_map.gd`に以下の関数を追加します
+
+`cell_tile_map.gd`
+
+```gdscript
+# 各セルを更新します
+func update() -> void:
+	# 現在のセルの状態を取得します
+	var cells = _get_cells_state()
+
+	# セルの状態を更新します
+	for key in cells:
+		# 周りのセルが何個生きているカウントします
+		var lives = 0
+
+		# 周囲のセルを調べます
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				if dy == 0 && dx == 0: continue
+
+				# 画面恥は繋がっているものとして座標を更新します
+				var x := int(key.x + dx + tile_map.x) % int(tile_map.x)
+				var y := int(key.y + dy + tile_map.y) % int(tile_map.y)
+				var target_map := Vector2i(x, y)
+
+				if cells[target_map]:
+					lives += 1
+
+		# セルを更新します
+		if !cells[key] && lives == 3:
+			_add_cell(key)
+		elif cells[key] && (lives <= 1 || lives >= 4):
+			_erase_cell(key)
+
+
+# セルを削除します
+func _erase_cell(coords: Vector2i) -> void:
+	erase_cell(0, coords)
+
+
+# 各セル座標上にセルが存在するかどうかの状態を取得します
+func _get_cells_state() -> Dictionary:
+	var dict := {}
+
+	# セル座標をkey, セルの存在をvalueとして登録します
+	for x in tile_map.x:
+		for y in tile_map.y:
+			var coords := Vector2i(x, y)
+			dict[coords] = get_cell_alternative_tile(0, coords) >= 0
+
+	return dict
+
+```
+
+次にMainノードに[Timerノード](https://docs.godotengine.org/en/stable/classes/class_timer.html)を追加します。
+
+![タイマーノードを追加](./docs/assets/pictures/add_timer.webp)
+
+右上の「インスペクター」パネルから「Timer」リストの中にある「Wait Time」を`0.1`に設定し、「Autostart」を`オン`にします。
+
+![タイマープロパティ](./docs/assets/pictures/timer_properties.webp)
+
+これで、自動的に開始される0.1秒カウントのループタイマーが作成できました。
+
+このタイマーに先程作成した更新処理を紐づけます。
+
+右上の「インスペクター」パネルの隣にある「ノード」タブをクリックし、「ノード」パネルを開きます。
+
+「Timer」リストの中にある「timeout()」シグナルをダブルクリックします。
+
+シグナルを接続する設定画面が開きますので、Mainノードが選択されているのを確認して「接続」をクリックします。
+
+![タイマーシグナル](./docs/assets/pictures/timer_signal.webp)
+
+作成されたシグナル内で更新処理を呼び出します。
+
+`main.gd`
+
+```gdscript
+func _on_timer_timeout() -> void:
+	# セルを更新します
+	$CellTileMap.update()
+```
+
+これで、ゲームの完成です。
+
+お疲れ様でした。
+
+実行してみると、ライフゲームがはじまります。
+
+![実行プレビュー](./docs/assets/pictures/preview.gif)
