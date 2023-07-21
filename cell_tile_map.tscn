@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://usisq4333vqy"]
+
+[ext_resource type="Texture2D" uid="uid://df2dxi7s6fu4w" path="res://icon.svg" id="1_kstjf"]
+[ext_resource type="Script" path="res://cell_tile_map.gd" id="2_sxegq"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ttxri"]
+texture = ExtResource("1_kstjf")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_5rn3c"]
+tile_size = Vector2i(128, 128)
+sources/0 = SubResource("TileSetAtlasSource_ttxri")
+
+[node name="CellTileMap" type="TileMap"]
+scale = Vector2(0.25, 0.25)
+tile_set = SubResource("TileSet_5rn3c")
+format = 2
+script = ExtResource("2_sxegq")
