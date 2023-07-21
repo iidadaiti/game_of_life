@@ -9,12 +9,6 @@ var cell_size := Vector2(tile_set.tile_size) * transform.get_scale()
 @onready var tile_map: Vector2i = (viewport_size / cell_size).ceil()
 
 
-# セットアップ処理です
-func _ready() -> void:
-	# セルリストを初期化します
-	reset()
-
-
 # セルリストを初期化します
 # incidenceは生成割合です
 func reset(incidence := 0.5) -> void:

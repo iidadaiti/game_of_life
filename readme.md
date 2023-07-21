@@ -117,11 +117,13 @@ Windows/Linuxでは`Ctrl+S`、macOSでは`Cmd+S`でも保存できます。
 
 ## スクリプトを設定する
 
-左上の「シーン」パネルから「Cells」ノードを選択し、その状態でスクリプトのアタッチを行います。（「シーン」パネル右上のアイコン）
+左上の「シーン」パネルから「CellTileMap」ノードを選択し、その状態でスクリプトのアタッチを行います。（「シーン」パネル右上のアイコン）
 
 ![CellTileMapにスクリプトを追加](./docs/assets/pictures/add_cell_tile_map_script.webp)
 
 スクリプトを以下に書き換えます。
+
+`cell_tile_map.gd`
 
 ```gdscript
 extends TileMap
@@ -155,6 +157,8 @@ func _add_cell(coords: Vector2i) -> void:
 
 今回は確認したいので以下のコードも追加します。
 
+`cell_tile_map.gd`
+
 ```gdscript
 # セットアップ処理です
 func _ready() -> void:
@@ -176,3 +180,70 @@ Windows/Linuxでは`Ctrl+R`、macOSでは`Cmd+R`を押してもシーンを実�
 > info
 > シーンはゲームの他の部分を作成する前であってもシーン単体でテストすることが可能です。
 > 素晴らしいですね。
+
+## Mainノードを作成する
+
+はじめに実行されるノードとしてMainノードを作成します。
+
+左下の「ファイルシステム」パネルを右クリックして新規シーンを作成します。
+
+メインパネルの新規シーンの追加アイコン（＋マーク）をクリックするか、Windows/LinuxではCtrl+N、macOSではCmd+Nを入力しても作成できます。
+
+ルートノードとして[Node](https://docs.godotengine.org/en/stable/classes/class_node.html)を選択し、名前をMainに変更します。
+
+![ルートノードの追加](./docs/assets/pictures/add_node.webp)
+
+今回は`main.tscn`というファイル名で保存します。
+
+このMainノードに、CellTileMapシーンを追加します。
+
+左上の「シーン」パネルから子シーンを追加するボタン（鎖アイコン）をクリックします。
+
+![シーンの追加](./docs/assets/pictures/add_scene.webp)
+
+`cell_tile_map.tscn`を選択します。
+
+### スクリプトを追加する
+
+Mainノードにスクリプトのアタッチします。
+
+今回のスクリプト名は`main.gd`とします。
+
+スクリプトを以下に書き換えます。
+
+`main.gd`
+
+```gdscript
+extends Node
+
+
+# セットアップ処理です
+func _ready() -> void:
+	# セルリストを初期化します
+	$CellTileMap.reset()
+
+```
+
+> info
+> Godotでは子要素に$\[ノード名\]で簡単にアクセスすることができます。
+> 素晴らしいですね。
+
+これで、CellTileMap側で初期化する必要はなくなったので、以下のコードは削除して置きましょう。
+
+`cell_tile_map.gd`
+
+```diff
+- # セットアップ処理です
+- func _ready() -> void:
+- 	# セルリストを初期化します
+- 	$CellTileMap.reset()
+```
+
+### メインシーンを設定する
+
+Windows/LinuxではCtrl+B、macOSではCmd+Bを入力し、ゲーム全体を実行します。
+
+実行の最にメインシーンの選択ダイアログが表示されますので、`main.tscn`を選択します。
+
+> info
+> 「プロジェクト」 -> 「プロジェクト設定」 -> 「アプリケーション」リスト内の「実行」の中でメインシーンは定義されています。

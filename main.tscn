@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvq7pon2e7iee"]
+
+[ext_resource type="PackedScene" uid="uid://usisq4333vqy" path="res://cell_tile_map.tscn" id="1_hbg3m"]
+[ext_resource type="Script" path="res://main.gd" id="1_il4go"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_il4go")
+
+[node name="CellTileMap" parent="." instance=ExtResource("1_hbg3m")]
